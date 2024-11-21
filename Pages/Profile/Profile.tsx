@@ -23,7 +23,7 @@ import { FolderOpen } from "lucide-react-native";
 
 export const ProfileScreen: React.FC = () => {
   const navigation = useNavigation();
-  const { user, updateProfilePicture, signOut } = useAuth();
+  const { user, updateProfilePicture, signOut, updateProfile } = useAuth();
   const [loading, setLoading] = useState(false);
   const [iaName, setIaName] = useState("");
   const [iaDescription, setIaDescription] = useState("");
@@ -32,8 +32,13 @@ export const ProfileScreen: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [visibleIaDialog, setVisibleIaDialog] = useState(false);
   const [visibleImageDialog, setVisibleImageDialog] = useState(false);
+  const [visibleEditDialog, setVisibleEditDialog] = useState(false);
   const [error, setError] = useState<string>("");
 
+  // States for editinguser profile
+  const [editedRazaoSocial, setEditedRazaoSocial] = useState(user?.razao_social || "");
+  const [editedEmail, setEditedEmail] = useState(user?.email || "");
+  const [editCnpj, setEditCnpj] = useState(user?.cnpj || "");
   const escolherArquivo = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
@@ -54,7 +59,21 @@ export const ProfileScreen: React.FC = () => {
       console.log("Arquivo selecionado:", fileUrl);
     }
   };
-
+  const handleUpdateProfile = async () => {
+    if (!user) return;
+    setLoading(true);
+    try {
+      await updateProfile(editedRazaoSocial, editedEmail, editCnpj); // Pass individual parameters
+      setSuccessMessage("Perfil atualizado com sucesso!");
+      setVisibleEditDialog(false);
+    } catch (err) {
+      console.error("Erro ao atualizar perfil:", err);
+      setError("Erro ao atualizar perfil.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   const handleCreateIa = async () => {
     if (!user) {
       console.error("Usuário não autenticado");
@@ -162,6 +181,14 @@ export const ProfileScreen: React.FC = () => {
             <Text style={styles.setorText}>{user?.email}</Text>
           </View>
         </View>
+
+         {/* Botão para editar o perfil */}
+         <TouchableOpacity
+          onPress={() => setVisibleEditDialog(true)}
+          style={styles.testButton}
+        >
+          <Text style={styles.buttonText}>Editar Perfil</Text>
+        </TouchableOpacity>
       </View>
 
       <TouchableOpacity
@@ -235,7 +262,7 @@ export const ProfileScreen: React.FC = () => {
             </Button>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={() => setVisibleIaDialog(false)} color="#00FF00">
+            <Button onPress={() => setVisibleIaDialog(false)} color="#fff">
               Cancelar
             </Button>
           </Dialog.Actions>
@@ -256,6 +283,39 @@ export const ProfileScreen: React.FC = () => {
           </View>
         ) : null}
       </View>
+      <Portal>
+        <Dialog
+          visible={visibleEditDialog}
+          onDismiss={() => setVisibleEditDialog(false)}
+          style={styles.dialog}
+        >
+          <Dialog.Title style={styles.dialogTitle}>Editar Perfil</Dialog.Title>
+          <Dialog.Content>
+            <TextInput
+              style={styles.input}
+              placeholder="Nome"
+              placeholderTextColor="#9E9E9E"
+              value={editedRazaoSocial}
+              onChangeText={setEditedRazaoSocial}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              placeholderTextColor="#9E9E9E"
+              value={editedEmail}
+              onChangeText={setEditedEmail}
+            />
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={handleUpdateProfile} color="#fff">
+              Atualizar
+            </Button>
+            <Button onPress={() => setVisibleEditDialog(false)} color="#fff">
+              Cancelar
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
       <Portal>
         <Dialog
           visible={visibleImageDialog}

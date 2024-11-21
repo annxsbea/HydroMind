@@ -5,6 +5,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#000",
   },
+  titleContainer: {
+    marginBottom: 20, // Espaço entre o título e a lista
+  },
   backgroundImage: {
     position: "absolute",
     width: "100%",
@@ -37,9 +40,9 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "white",
-    textAlign: "center",
     marginTop: 50,
     fontSize: 25,
+    alignSelf: "center",
   },
   loader: {
     flex: 1,

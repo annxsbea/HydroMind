@@ -10,6 +10,7 @@ import {
   getDoc,
   Firestore,
   Timestamp,
+  deleteDoc,
 } from "firebase/firestore";
 import { database } from "../firebaseConfig";
 import { ListIasResponse, UserDetails } from "../@types";
@@ -46,8 +47,36 @@ export const criarIa = async (
     throw error; // Lança o erro para que o chamador possa tratá-lo
   }
 };
+export async function excluirIa(iaId: string): Promise<void> {
+  try {
+    const iaRef = doc(database, "ias", iaId); // Acesse diretamente a coleção "ias" usando o `uid`
+    await deleteDoc(iaRef);
+    console.log("IA excluída com sucesso!");
+  } catch (error) {
+    console.error("Erro ao excluir a IA:", error);
+    throw new Error("Erro ao excluir a IA: " + error.message);
+  }
+}
 
-
+// Função para editar uma IA
+export async function editarIa(
+  iaId: string,
+  updatedData: {
+    nomeIa?: string;
+    descricao?: string;
+    consumoAtual?: string;
+    status?: string;
+  }
+): Promise<void> {
+  try {
+    const iaRef = doc(database, "ias", iaId); // Use `iaId` diretamente para acessar o documento
+    await updateDoc(iaRef, updatedData);
+    console.log("IA editada com sucesso!");
+  } catch (error) {
+    console.error("Erro ao editar a IA:", error);
+    throw new Error("Erro ao editar a IA: " + error.message);
+  }
+}
 export async function adicionaranalise_Desperdicio(
   idIa: string,
   analise: any

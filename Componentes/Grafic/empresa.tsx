@@ -1,22 +1,25 @@
 // DashboardGlobal.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useCompanyData } from '../../Services/Empresa';
+import { auth } from '../../firebaseConfig';
+import { useAuth } from '../../Context/AuthContext';
 
 const DashboardGlobal: React.FC = () => {
-  const { companyData, loading } = useCompanyData();
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Dashboard Global</Text>
       {loading ? (
-        <Text style={styles.info}>Carregando dados da empresa...</Text>
-      ) : companyData ? (
+        <Text style={styles.info}>Carregando dados das IAS...</Text>
+      ) : user ? (
         <>
-          <Text style={styles.companyTitle}>Informações da Empresa</Text>
-          <Text style={styles.info}>Nome: {companyData.name}</Text>
-          <Text style={styles.info}>Meta de Vendas: {companyData.metaVendas}</Text>
-          <Text style={styles.info}>Quantidade de Vendas: {companyData.qtdVendas}</Text>
+          <Text style={styles.companyTitle}>Informações da Economia de Ia</Text>
+          <Text style={styles.info}>Meta de Vendas: {user.Total_economizado}</Text>
+          <Text style={styles.info}>Quantidade de Vendas: {user.Total_economizado 
+          }</Text>
         </>
       ) : (
         <Text style={styles.info}>Dados da empresa não disponíveis</Text>

@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, FlatList } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, FlatList, Alert } from "react-native";
 import { DetailsIaRouteProp, RootStackParamList } from "../../@types";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { ArrowLeft, Cloud, RefreshCcw, CheckCircle, XCircle, Info } from "lucide-react-native";
 import { styles } from "./styles";
 import { useAuth } from "../../Context/AuthContext";
-import { updateIaStatus, fetchRecomendacoes } from "../../Services/Ias";
-import { Button, Modal, Provider } from "react-native-paper";
+import { updateIaStatus, fetchRecomendacoes, editarIa, excluirIa } from "../../Services/Ias";
+import { Button, Provider, TextInput } from "react-native-paper";
 import { Timestamp } from "firebase/firestore";
 import { format } from "date-fns";
 import {ptBR} from "date-fns/locale/pt-BR";
+import { Modal } from 'react-native';
 
 type Props = {
   route: DetailsIaRouteProp;
@@ -17,6 +18,13 @@ type Props = {
 
 export default function DetailsIa({ route }: Props) {
   const { ia } = route.params;
+  const [modalVisible, setModalVisible] = useState(false);
+  const [editData, setEditData] = useState({
+    nomeIa: ia.nomeIa,
+    descricao: ia.descricao,
+    consumoAtual: ia.consumoAtual,
+    status: ia.status,
+  });
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [statusModalVisible, setStatusModalVisible] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState(ia.status || "Aberto");
@@ -38,7 +46,36 @@ export default function DetailsIa({ route }: Props) {
     setSelectedScript(scriptDescricao);
     setModalVisibleScript(true);
   };
-
+  const handleDelete = async () => {
+    Alert.alert(
+      "Confirmação",
+      "Você tem certeza que deseja excluir essa IA?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Excluir",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await excluirIa(ia.uid); // Passe apenas `ia.uid`
+              navigation.goBack(); // Volta para a tela anterior após exclusão
+            } catch (error) {
+              console.error("Erro ao excluir a IA:", error);
+            }
+          },
+        },
+      ]
+    );
+  };
+  const handleSaveEdit = async () => {
+    try {
+      await editarIa(ia.uid, editData);
+      Alert.alert("Sucesso", "IA editada com sucesso!");
+      setModalVisible(false); // Fecha o modal após salvar
+    } catch (error) {
+      console.error("Erro ao editar a IA:", error);
+    }
+  };
   const handleImplementRecommendation = async (scriptDescricao: string) => {
     try {
       setClientState((prevState) => ({
@@ -123,15 +160,69 @@ export default function DetailsIa({ route }: Props) {
             }
           />
         </View>
+
+        {/* Botões de Edição e Exclusão */}
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.editButton}>
+          <Text style={styles.buttonText}>Editar IA</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleDelete} style={styles.deleteButton}>
+          <Text style={styles.buttonText}>Excluir IA</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Modal de Recomendação */}
-      <Modal visible={modalVisibleScript} onDismiss={() => setModalVisibleScript(false)}>
-        <View style={styles.modalContent}>
-          <Text>{selectedScript}</Text>
-          <Button onPress={() => setModalVisibleScript(false)}>Fechar</Button>
+   
+      {/* Modal de Edição */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Editar IA</Text>
+            
+            {/* Campos de Edição */}
+            <TextInput
+              style={styles.input}
+              placeholder="Nome da IA"
+              value={editData.nomeIa}
+              onChangeText={(text) => setEditData({ ...editData, nomeIa: text })}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Descrição"
+              value={editData.descricao}
+              onChangeText={(text) => setEditData({ ...editData, descricao: text })}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Consumo Atual"
+              value={editData.consumoAtual}
+              onChangeText={(text) => setEditData({ ...editData, consumoAtual: text })}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Status"
+              value={editData.status}
+              onChangeText={(text) => setEditData({ ...editData, status: text })}
+            />
+
+            {/* Botões do Modal */}
+            <View style={styles.modalButtonContainer}>
+              <TouchableOpacity onPress={handleSaveEdit} style={styles.saveButton}>
+                <Text style={styles.buttonText}>Salvar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.cancelButton}>
+                <Text style={styles.buttonText}>Cancelar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
       </Modal>
+      </View>
+     
     </Provider>
   );
 }

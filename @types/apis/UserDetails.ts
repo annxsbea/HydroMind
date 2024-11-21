@@ -4,6 +4,8 @@ export interface UserDetails {
   razao_social: string;
   cnpj: string;
   profilePictureUrl?: string;
+  Total_economizado?: number;
+  meta_economia?: number;
 
 }
 

@@ -6,7 +6,7 @@ export default function Logo() {
     <View style={{}}>
       <Image
         source={require("../../assets/Logo2.png")}
-        style={{ width: 350, height: 150 }}
+        style={{ width: 250, height: 80 }}
       />
     </View>
   );

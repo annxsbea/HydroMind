@@ -26,6 +26,7 @@ interface AuthContextProps {
   ) => Promise<User | null>;
   signOut: () => Promise<void>;
   updateProfilePicture: (newPictureUrl: string) => Promise<void>; 
+  updateProfile: (newRazaoSocial: string, newEmail: string, newCnpj: string) => Promise<void>;
 
 }
 
@@ -96,7 +97,26 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       throw new Error("User not authenticated");
     }
   };
-
+  const updateProfile = async (editedRazaoSocial: string, editedEmail: string, editCnpj: string) => {
+    if (!user) {
+      console.error("Usuário não autenticado");
+      throw new Error("User not authenticated");
+    }
+  
+    setLoading(true);
+    try {
+      const updatedUser = { ...user, razao_social: editedRazaoSocial, email: editedEmail,cnpj: editCnpj };
+      setUser(updatedUser);
+  
+      await setDoc(doc(database, "usuario", user.uid), updatedUser, { merge: true });
+    } catch (error) {
+      console.error("Erro ao atualizar informações de perfil:", error);
+      setError("Failed to update profile information");
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
   const signIn = async (email: string, password: string): Promise<UserDetails | null> => {
     setLoading(true);
     try {
@@ -160,7 +180,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <AuthContext.Provider value={{ user, signIn, createAccount, signOut, updateProfilePicture }}>
+// Atualize o valor do contexto
+<AuthContext.Provider value={{ user, signIn, createAccount, signOut, updateProfilePicture, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );

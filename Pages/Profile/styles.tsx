@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   createButton: {
-    backgroundColor: "#1B2736", 
+    backgroundColor: "#172823", 
     marginTop: 20,
   },
   attachmentButton: {

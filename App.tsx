@@ -1,6 +1,6 @@
-import React, { useEffect }from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, View, StatusBar } from "react-native";
-import { Provider as PaperProvider } from 'react-native-paper'; // Importando o Provider do react-native-paper
+import { Provider as PaperProvider } from "react-native-paper"; // Importando o Provider do react-native-paper
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Ionicons } from "@expo/vector-icons";
@@ -11,20 +11,19 @@ import SearchScreen from "./Pages/Search";
 import SignInScreen from "./Pages/SignIn/SignInScreen";
 import SignUpScreen from "./Pages/SignUp";
 import { AuthProvider, useAuth } from "./Context/AuthContext";
-import * as Notifications from 'expo-notifications';
+import * as Notifications from "expo-notifications";
 import { UserDetails } from "./@types";
 import { ProfileScreen } from "./Pages/Profile/Profile";
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer } from "@react-navigation/native";
 import DetailsIa from "./Pages/DetailsIa";
-
+import iconIa from "./Componentes/imagens/iconIa";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+import { Image } from "react-native";
 
 function MainStack() {
-
-
   return (
-<Stack.Navigator id={"RootStack" as undefined}>      
+    <Stack.Navigator id={"RootStack" as undefined}>
       <Stack.Screen
         name="SignIn"
         component={SignInScreen}
@@ -41,7 +40,8 @@ function MainStack() {
 
 function MainTabs() {
   return (
-    <Tab.Navigator id={"MainTabs" as undefined}
+    <Tab.Navigator
+      id={"MainTabs" as undefined}
       screenOptions={{
         tabBarActiveTintColor: "#B9B2D3",
         tabBarStyle: {
@@ -68,13 +68,22 @@ function MainTabs() {
           headerShown: false,
           tabBarLabel: "",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="search" size={size} color={color} />
+            <Image
+              source={require("./assets/ICONIA.png")}
+              style={{
+                width: 100,
+                height: 50,
+                tintColor: color, 
+                
+              }}
+              resizeMode="contain"
+            />
           ),
         }}
       />
       <Tab.Screen
         name="Profile"
-        component={ProfileScreen} 
+        component={ProfileScreen}
         options={{
           headerShown: false,
           tabBarLabel: "",
@@ -87,7 +96,6 @@ function MainTabs() {
   );
 }
 
-
 const RootNavigator = () => {
   const { user } = useAuth();
 
@@ -97,7 +105,7 @@ const RootNavigator = () => {
         <>
           <Stack.Screen
             name="Main"
-            component={MainTabs} 
+            component={MainTabs}
             options={{ headerShown: false }}
           />
           <Stack.Screen
@@ -105,12 +113,11 @@ const RootNavigator = () => {
             component={DetailsIa}
             options={{ headerShown: false }}
           />
-         
         </>
       ) : (
         <Stack.Screen
           name="Auth"
-          component={MainStack} 
+          component={MainStack}
           options={{ headerShown: false }}
         />
       )}
@@ -123,7 +130,8 @@ export default function App() {
     const requestPermissions = async () => {
       const { status } = await Notifications.getPermissionsAsync();
       if (status !== "granted") {
-        const { status: newStatus } = await Notifications.requestPermissionsAsync();
+        const { status: newStatus } =
+          await Notifications.requestPermissionsAsync();
         if (newStatus !== "granted") {
           alert("Você precisa permitir notificações para usar este recurso!");
         }
@@ -154,7 +162,6 @@ export default function App() {
     </PaperProvider>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {

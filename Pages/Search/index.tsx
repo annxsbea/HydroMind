@@ -17,6 +17,8 @@ import styles from "./styles";
 import { useAuth } from "../../Context/AuthContext";
 import { CheckCircle, Cloud, Info, RefreshCcw, XCircle } from "lucide-react-native";
 
+import { Image } from "react-native";
+
 export default function Search() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -96,7 +98,11 @@ export default function Search() {
   return (
     <View style={styles.container}>
       <View style={styles.clientListContainer}>
-        <Text style={styles.title}>IAs Cadastradas</Text>
+      <View style={styles.titleContainer}>
+      <Text style={styles.title}>IAs Cadastradas</Text>
+
+ 
+  </View>
         {loading ? (
           <ActivityIndicator size="large" color="#fff" style={styles.loader} />
         ) : (

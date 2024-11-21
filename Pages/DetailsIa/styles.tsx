@@ -19,12 +19,73 @@ export const styles = StyleSheet.create({
     backgroundColor: '#0000',
     marginLeft: 50,
   },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
+  },
+  editButton: {
+    backgroundColor: "#4CAF50",
+    padding: 10,
+    borderRadius: 5,
+  },
+  deleteButton: {
+    backgroundColor: "#F44336",
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+  },  
+
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
   modalContent: {
+    width: "90%",
+    backgroundColor: "white",
     padding: 20,
-    backgroundColor: "#fff",
-    borderRadius: 8,
+    borderRadius: 10,
     alignItems: "center",
   },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  input: {
+    width: "100%",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+    marginBottom: 15,
+    padding: 8,
+  },
+  modalButtonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginTop: 20,
+  },
+  saveButton: {
+    backgroundColor: "#4CAF50",
+    padding: 10,
+    borderRadius: 5,
+    marginRight: 10,
+    flex: 1,
+    alignItems: "center",
+  },
+  cancelButton: {
+    backgroundColor: "#F44336",
+    padding: 10,
+    borderRadius: 5,
+    flex: 1,
+    alignItems: "center",
+  },
+
   clientInfoContainer: {
     padding: 20,
   },
@@ -127,18 +188,7 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     color: "#333",
   },
-  modalContainer: {
-    backgroundColor: "white",
-    padding: 20,
-    margin: 20,
-    borderRadius: 10,
-    elevation: 5,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
+
   scriptCard: {
     backgroundColor: "#66044B", 
     padding: 10, 
