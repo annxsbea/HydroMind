@@ -86,10 +86,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
     dialog:{
-      backgroundColor: "#000",
+      backgroundColor: "#fff",
     },
     dialogTitle: {
-      color: "#fff", 
+      color: "#000", 
     },
       logoutButtonText: {
       fontSize: 17,

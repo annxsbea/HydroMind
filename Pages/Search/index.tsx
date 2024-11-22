@@ -29,6 +29,7 @@ import * as ImagePicker from "expo-image-picker";
 
 import { Image } from "react-native";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import CreateIaDialog from "../../Componentes/Modal/CriarIa";
 
 export default function Search() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -254,74 +255,8 @@ export default function Search() {
       >
         {error}
       </Snackbar>
+      <CreateIaDialog visible={visibleIaDialog} onDismiss={() => setVisibleIaDialog(false)} />
 
-      <Portal>
-        <Dialog
-          visible={visibleIaDialog}
-          onDismiss={() => setVisibleIaDialog(false)}
-          style={styles.dialog}
-        >
-          <Dialog.Title style={styles.dialogTitle}>Nova IA</Dialog.Title>
-          <Dialog.Content>
-            <TextInput
-              style={styles.input}
-              placeholder="Nome da IA"
-              placeholderTextColor="#9E9E9E"
-              value={iaName}
-              onChangeText={setIaName}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Descrição"
-              placeholderTextColor="#9E9E9E"
-              value={iaDescription}
-              onChangeText={setIaDescription}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Consumo Atual (em kWh)"
-              placeholderTextColor="#9E9E9E"
-              value={iaConsumption}
-              onChangeText={setIaConsumption}
-              keyboardType="numeric"
-            />
-            <View style={{ marginBottom: 20 }}>
-              <Text style={{ color: "#fff", marginBottom: 10 }}>
-                Anexar arquivo com dados de consumo:
-              </Text>
-              <Button
-                mode="contained"
-                onPress={escolherArquivo}
-                contentStyle={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-                style={{
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor: "#1B2736",
-                }}
-              >
-                <Text style={{ color: "#fff", fontSize: 16 }}>
-                  Escolher Arquivo
-                </Text>
-              </Button>
-            </View>
-            <Button
-              mode="contained"
-              onPress={handleCreateIa}
-              style={styles.createButton}
-            >
-              Criar IA
-            </Button>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setVisibleIaDialog(false)} color="#fff">
-              Cancelar
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
     </View>
   );
 }

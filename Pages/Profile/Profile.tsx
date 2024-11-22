@@ -22,6 +22,7 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { FolderOpen } from "lucide-react-native";
 import { FAB } from "react-native-paper";
 import Carrossel from "../../Componentes/Carrossel";
+import CreateIaDialog from "../../Componentes/Modal/CriarIa";
 
 export const ProfileScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -247,76 +248,8 @@ export const ProfileScreen: React.FC = () => {
   }}
 />
 
+<CreateIaDialog visible={visibleIaDialog} onDismiss={() => setVisibleIaDialog(false)} />
 
-      <Portal>
-        <Dialog
-          visible={visibleIaDialog}
-          onDismiss={() => setVisibleIaDialog(false)}
-          style={styles.dialog}
-        >
-          <Dialog.Title style={styles.dialogTitle}>Nova IA</Dialog.Title>
-          <Dialog.Content>
-            <TextInput
-              style={styles.input}
-              placeholder="Nome da IA"
-              placeholderTextColor="#9E9E9E"
-              value={iaName}
-              onChangeText={setIaName}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Descrição"
-              placeholderTextColor="#9E9E9E"
-              value={iaDescription}
-              onChangeText={setIaDescription}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Consumo Atual (em kWh)"
-              placeholderTextColor="#9E9E9E"
-              value={iaConsumption}
-              onChangeText={setIaConsumption}
-              keyboardType="numeric"
-            />
-           <View style={{ marginBottom: 20 }}>
-              <Text style={{ color: "#fff", marginBottom: 10 }}>
-                Anexar arquivo com dados de consumo:
-              </Text>
-              <Button
-                mode="contained"
-                onPress={escolherArquivo}
-                contentStyle={{
-                  flexDirection: "row",
-                  alignItems: "center", 
-                 
-                }}
-                style={{
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor: "#1B2736",
-                }}
-              >
-                <Text style={{ color: "#fff", fontSize: 16 }}>
-                 Anexar Arquivo
-                </Text>
-              </Button>
-            </View>
-            <Button
-              mode="contained"
-              onPress={handleCreateIa}
-              style={styles.createButton}
-            >
-              <Text> Criar IA</Text>
-             
-            </Button>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setVisibleIaDialog(false)} style={{}}>
-             <Text style={{ color: "#fff" }}>Cancelar</Text>
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
       <View style={styles.container}>
         {successMessage ? (
           <View style={styles.successContainer}>
@@ -339,14 +272,16 @@ export const ProfileScreen: React.FC = () => {
           <Dialog.Title style={styles.dialogTitle}>Editar Perfil</Dialog.Title>
           <Dialog.Content>
             <TextInput
-              style={styles.input}
               placeholder="Nome"
+              
               placeholderTextColor="#9E9E9E"
               value={editedRazaoSocial}
+              style={{backgroundColor:"#fff",borderColor:"#3C5A65",borderWidth:1, marginBottom: 10, padding: 10, borderRadius: 5}}
+
               onChangeText={setEditedRazaoSocial}
             />
             <TextInput
-              style={styles.input}
+              style={{backgroundColor:"#fff",borderColor:"#3C5A65",borderWidth:1, marginBottom: 10, padding: 10, borderRadius: 5}}
               placeholder="Email"
               placeholderTextColor="#9E9E9E"
               value={editedEmail}
@@ -354,12 +289,12 @@ export const ProfileScreen: React.FC = () => {
             />
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={handleUpdateProfile} mode="contained">
+            <Button onPress={handleUpdateProfile} mode="contained" style={{ backgroundColor: "#3C5A65" }}>
               <Text style={{ color: "#fff" }}> Atualizar</Text>
              
             </Button>
             <Button onPress={() => setVisibleEditDialog(false)} >
-            <Text style={{ color: "#fff" }}> Cancelar</Text>
+            <Text style={{ color: "#000" }}> Cancelar</Text>
 
               
             </Button>
