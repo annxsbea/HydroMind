@@ -55,7 +55,7 @@ Empresas e desenvolvedores frequentemente não possuem ferramentas específicas 
   
 - [Figma](https://www.figma.com/design/pRDMvnWEvPSXTBzhiFSuee/Hydro-Mind?node-id=0-1&t=ZjremckOY2yL5crc-1)
 
--[Video]()
+- [Video]()
 
 -----------------------------------------------------------------------------------------------------
 # Como Executar o Projeto
@@ -67,7 +67,7 @@ git clone https://github.com/annxsbea/HydroMind.git
 ```
 2.Instale as Dependências:
 ```
-cd challenge-plusoft-2tdsa-2024-cgeniuns
+cd HydrioMindApp
 npm install
 ```
 3.Execute o Projeto:
