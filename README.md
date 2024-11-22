@@ -1,3 +1,4 @@
+<<<<<<< HEAD:REDME.md
    # HydrioMind  
   - Ana Paula Nascimento Silva  rm552513  2tdsr
   - Anna Beatriz Soares Camargo Rm99814 2TDSA
@@ -5,6 +6,9 @@
   - Marcelo Henrique  Borgas  RM:98893 2TDSA
   - Michael Bombo Leon RM551382 2TDSA
    **Aplicativo Inteligente para Monitoramento de Consumo de Água e Energia com Foco na Eficiência das IAs em Treinamento**  
+=======
+<img src="./assets/LOGOTOTAL.png" alt="HYDRIOMIND">
+>>>>>>> 755006dd5fd1c8f5dbab15d56c0a3535aea54c3d:README.md
 
    ---
 
@@ -61,8 +65,12 @@
 
    -[Video]()
 
+<<<<<<< HEAD:REDME.md
    -----------------------------------------------------------------------------------------------------
    # Como Executar o Projeto
+=======
+- [Video]()
+>>>>>>> 755006dd5fd1c8f5dbab15d56c0a3535aea54c3d:README.md
 
    1. **Clone o Repositório**:
 
@@ -80,9 +88,25 @@
    ```
    4.Acesse o Aplicativo:
 
+<<<<<<< HEAD:REDME.md
    Escaneie o QR code gerado com o aplicativo Expo Go em seu dispositivo móvel, ou
    Abra o simulador iOS ou Android, dependendo da sua preferência, ou
    Acesse via web.
+=======
+```bash
+git clone https://github.com/annxsbea/HydroMind.git
+```
+2.Instale as Dependências:
+```
+cd HydrioMindApp
+npm install
+```
+3.Execute o Projeto:
+```
+npm start
+```
+4.Acesse o Aplicativo:
+>>>>>>> 755006dd5fd1c8f5dbab15d56c0a3535aea54c3d:README.md
 
    5.Para Fazer Login:
 
@@ -95,4 +119,8 @@
 
    6.Contribuição
 
+<<<<<<< HEAD:REDME.md
    Contribuições são bem-vindas! Sinta-se à vontade para enviar pull requests com melhorias, correções de bugs ou novas funcionalidades.
+=======
+Contribuições são bem-vindas! Sinta-se à vontade para enviar pull requests com melhorias, correções de bugs ou novas funcionalidades.
+>>>>>>> 755006dd5fd1c8f5dbab15d56c0a3535aea54c3d:README.md
