@@ -1,4 +1,4 @@
-<img src="./assets/LOGOTOTAL" alt="HYDRIOMIND">
+<img src="./assets/LOGOTOTAL.png" alt="HYDRIOMIND">
 
 
 # HydrioMind  
