@@ -1,8 +1,5 @@
 <img src="./assets/LOGOTOTAL.png" alt="HYDRIOMIND">
 
-
-# HydrioMind  
-
 **Aplicativo Inteligente para Monitoramento de Consumo de Água e Energia com Foco na Eficiência das IAs em Treinamento**  
 
 ---
