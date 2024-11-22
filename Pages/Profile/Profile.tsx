@@ -21,6 +21,7 @@ import Person from "../../Componentes/imagens/Person";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { FolderOpen } from "lucide-react-native";
 import { FAB } from "react-native-paper";
+import Carrossel from "../../Componentes/Carrossel";
 
 export const ProfileScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -163,7 +164,6 @@ export const ProfileScreen: React.FC = () => {
       });
     }
   const handlePress = () => {
-    // Ação ao pressionar o FAB
     console.log("FAB pressionado!");
   };
     if (!result.canceled) {
@@ -209,6 +209,7 @@ export const ProfileScreen: React.FC = () => {
 
        
       </View>
+      <Carrossel />
 
      
   <FAB.Group
@@ -240,8 +241,9 @@ export const ProfileScreen: React.FC = () => {
   style={{
     position: "absolute", 
     right: 16, 
-    bottom: -300, 
+    bottom: -400, 
     zIndex: 10, 
+    
   }}
 />
 
@@ -286,6 +288,7 @@ export const ProfileScreen: React.FC = () => {
                 contentStyle={{
                   flexDirection: "row",
                   alignItems: "center", 
+                 
                 }}
                 style={{
                   justifyContent: "center",
@@ -293,9 +296,8 @@ export const ProfileScreen: React.FC = () => {
                   backgroundColor: "#1B2736",
                 }}
               >
-                <FolderOpen color="#fff" style={{ marginRight: 10 }} />
                 <Text style={{ color: "#fff", fontSize: 16 }}>
-                  Escolher Arquivo
+                 Anexar Arquivo
                 </Text>
               </Button>
             </View>
@@ -304,12 +306,13 @@ export const ProfileScreen: React.FC = () => {
               onPress={handleCreateIa}
               style={styles.createButton}
             >
-              Criar IA
+              <Text> Criar IA</Text>
+             
             </Button>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={() => setVisibleIaDialog(false)} color="#fff">
-              Cancelar
+            <Button onPress={() => setVisibleIaDialog(false)} style={{}}>
+             <Text style={{ color: "#fff" }}>Cancelar</Text>
             </Button>
           </Dialog.Actions>
         </Dialog>
@@ -320,9 +323,7 @@ export const ProfileScreen: React.FC = () => {
             <Text style={styles.successText}>{successMessage}</Text>
           </View>
         ) : null}
-        <TouchableOpacity onPress={signOut} style={styles.logoutButton}>
-          <Text style={styles.logoutButtonText}>Sair</Text>
-        </TouchableOpacity>
+     
         {error ? (
           <View style={styles.errorContainer}>
             <Text style={styles.errorText}>{error}</Text>
@@ -353,11 +354,14 @@ export const ProfileScreen: React.FC = () => {
             />
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={handleUpdateProfile} color="#fff">
-              Atualizar
+            <Button onPress={handleUpdateProfile} mode="contained">
+              <Text style={{ color: "#fff" }}> Atualizar</Text>
+             
             </Button>
-            <Button onPress={() => setVisibleEditDialog(false)} color="#fff">
-              Cancelar
+            <Button onPress={() => setVisibleEditDialog(false)} >
+            <Text style={{ color: "#fff" }}> Cancelar</Text>
+
+              
             </Button>
           </Dialog.Actions>
         </Dialog>
@@ -375,7 +379,8 @@ export const ProfileScreen: React.FC = () => {
             <Button onPress={() => pickImage("camera")}>Câmera</Button>
             <Button onPress={() => pickImage("gallery")}>Galeria</Button>
             <Button onPress={() => setVisibleImageDialog(false)}>
-              Cancelar
+            <Text style={{ color: "#fff" }}> Cancelar</Text>
+
             </Button>
           </Dialog.Actions>
         </Dialog>

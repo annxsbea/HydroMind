@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   dialog:{
-    backgroundColor: "#3C4E65",
+    backgroundColor: "#000",
   },
   dialogTitle: {
     color: "#fff", 
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   attachmentButtonText: {
     color: "#00FF00", 
     fontSize: 16,
-  },  
+  }, 
   logoContainer: {
     marginTop: 80,
     alignItems: "center",

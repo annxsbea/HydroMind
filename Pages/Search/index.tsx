@@ -177,7 +177,7 @@ export default function Search() {
         descricao: iaDescription,
         consumoAtual: consumoAtualNumber,
         status: "ativo",
-        fileUrl, // Pode ser nulo
+        fileUrl,
       };
 
       const iaId = await criarIa(user.uid, iaData);
@@ -231,13 +231,19 @@ export default function Search() {
             onPress: () => setVisibleIaDialog(true),
           },
         ]}
-        onStateChange={({ open }) => setMenuVisible(open)}
+        onStateChange={({ open }) => {
+          setMenuVisible(open);
+          console.log("Menu visível: ", open);
+        }}
         onPress={() => {
           if (!menuVisible) {
           }
         }}
         style={{
-      
+          position: "absolute",
+          right: 16,
+          bottom: 16,
+          zIndex: 10,
         }}
       />
       <Snackbar
@@ -296,7 +302,6 @@ export default function Search() {
                   backgroundColor: "#1B2736",
                 }}
               >
-                <FolderOpen color="#fff" style={{ marginRight: 10 }} />
                 <Text style={{ color: "#fff", fontSize: 16 }}>
                   Escolher Arquivo
                 </Text>

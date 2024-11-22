@@ -73,30 +73,27 @@ export default function DetailsIa({ route }: Props) {
     if (!user || !ia) return;
 
     const unsubscribe = ouvirRecomendacoes(user.uid, ia.uid, (dados) => {
-      setRecomendacoes(dados); // Atualiza o estado com as recomendações
+      setRecomendacoes(dados);
     });
-
-    return () => unsubscribe(); // Desativa o listener ao desmontar o componente
+    return () => unsubscribe();
   }, [user, ia]);
 
   useEffect(() => {
     if (!user || !ia) return;
-
     const unsubscribe = ouvirAnalisesDesperdicio(user.uid, ia.uid, (dados) => {
-      setAnaliseDesperdicio(dados); // Atualiza o estado com as análises
+      setAnaliseDesperdicio(dados);
     });
 
-    return () => unsubscribe(); // Desativa o listener ao desmontar o componente
+    return () => unsubscribe();
   }, [user, ia]);
 
   useEffect(() => {
     if (!user) return;
-
     const unsubscribe = onSnapshot(
       collection(database, `usuario/${user.uid}/ias`),
       (snapshot) => {
         const updatedIas: ListIasResponse[] = snapshot.docs.map((doc) => ({
-          uid: doc.id, // ID do documento Firestore
+          uid: doc.id,
           nomeIa: doc.data().nomeIa,
           descricao: doc.data().descricao,
           consumoAtual: doc.data().consumoAtual,
@@ -112,7 +109,7 @@ export default function DetailsIa({ route }: Props) {
   }, [user]);
 
   if (!user) {
-    return <div>Carregando...</div>;
+    return <Text>Carregando...</Text>;
   }
 
   const openScriptModal = (scriptDescricao: string) => {
@@ -144,36 +141,22 @@ export default function DetailsIa({ route }: Props) {
     }
   };
 
-  const handleCreateRecomendacao = async () => {
-    try {
-      if (!user || !ia) {
-        Alert.alert("Erro", "Usuário ou IA não definido.");
-        return;
-      }
-
-      const descricao = "Nova recomendação de teste."; // Aqui você pode receber uma entrada do usuário
-      await criarRecomendacao(user.uid, ia.uid, descricao);
-
-      Alert.alert("Sucesso", "Recomendação criada com sucesso!");
-    } catch (error) {
-      Alert.alert("Erro", "Não foi possível criar a recomendação.");
-    }
-  };
-
   const handleImplementRecommendation = async (scriptDescricao: string) => {
     try {
       if (!ia.uid) {
         throw new Error("ID da IA não encontrado.");
       }
-  
+
       setClientState((prevState) => ({
         ...prevState,
         status: "Aplicando Recomendações",
       }));
-  
+
       await updateIaStatus(ia.uid, "Aplicando Recomendações");
-  
-      console.log(`Recomendação "${scriptDescricao}" implementada com sucesso.`);
+
+      console.log(
+        `Recomendação "${scriptDescricao}" implementada com sucesso.`
+      );
     } catch (error) {
       console.error("Erro ao implementar recomendação:", error);
       if (error instanceof Error) {
@@ -182,7 +165,6 @@ export default function DetailsIa({ route }: Props) {
       alert("Houve um erro ao implementar a recomendação. Tente novamente.");
     }
   };
-  
 
   const formattedDate =
     ia.dataCriacao instanceof Timestamp
@@ -190,13 +172,13 @@ export default function DetailsIa({ route }: Props) {
           locale: ptBR,
         })
       : ia.dataCriacao;
+
   const onPressDelete = (event: GestureResponderEvent) => {
     handleDelete(ia);
   };
   return (
     <Provider>
       <View style={styles.container}>
-        {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity
             onPress={() => navigation.goBack()}
@@ -205,169 +187,176 @@ export default function DetailsIa({ route }: Props) {
             <ArrowLeft color="#fff" size={35} />
           </TouchableOpacity>
         </View>
-
-        {/* Informações do Cliente */}
-        <View style={styles.clientInfoContainer}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <View>
-              <Text style={styles.clientDetailText}>IA:</Text>
-              <Text style={styles.clientName}>{ia.nomeIa}</Text>
-            </View>
-            <View>
-              <Text style={styles.clientDetailText}>Estado de Análise:</Text>
-              <StatusIndicator
-                status={clientState.status ?? "Não disponível"}
-              />
-            </View>
-          </View>
-        </View>
-
-        {/* Detalhes da IA */}
-        <View style={styles.clientDetailCard}>
-          <View style={{ flexDirection: "row", marginTop: 8 }}>
-            <Text style={styles.clientDetailText}>Descrição:</Text>
-            <Text style={styles.clientDetailValue}>{ia.descricao}</Text>
-          </View>
-          <View style={{ flexDirection: "row", marginTop: 8 }}>
-            <Text style={styles.clientDetailText}>Consumo Atual:</Text>
-            <Text style={styles.clientDetailValue}>{ia.consumoAtual}</Text>
-          </View>
-          <View style={{ flexDirection: "row", marginTop: 8 }}>
-            <Text style={styles.clientDetailText}>Data de Criação:</Text>
-            <Text style={styles.clientDetailValue}>{formattedDate}</Text>
-          </View>
-        </View>
-
-        <View style={styles.clientDetailCard}>
-          <Text style={styles.clientDetailText}>Recomendações:</Text>
-          {recomendacoes.length > 0 ? (
-            recomendacoes.map((rec) => (
-              <View key={rec.id} style={{ marginBottom: 10 }}>
-                <Text
-                  style={{ fontWeight: "bold", color: "#fff", marginBottom: 5 }}
-                >
-                  Descrição: {rec.descricao}
-                </Text>
-                <Text
-                  style={{ fontWeight: "bold", color: "#fff", marginBottom: 5 }}
-                >
-                  Data:{" "}
-                  {rec.dataRecomendacao?.toDate?.().toLocaleString() || "N/A"}
-                </Text>
-                <Text
-                  style={{ fontWeight: "bold", color: "#fff", marginBottom: 5 }}
-                >
-                  Status Implementado: {rec.implementada ? "Sim" : "Não"}
-                </Text>
+        <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
+          {/* Informações do Cliente */}
+          <View style={styles.clientInfoContainer}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <View>
+                <Text style={styles.clientDetailText}>IA:</Text>
+                <Text style={styles.clientName}>{ia.nomeIa}</Text>
               </View>
-            ))
-          ) : (
-            <Text style={{ fontWeight: "bold", color: "#fff", marginBottom: 5 }}>Não há recomendações disponíveis.</Text>
-          )}
-        </View>
-        <View style={styles.clientDetailCard}>
-          <Text style={styles.clientDetailText}>Análises de Desperdício:</Text>
+              <View>
+                <Text style={styles.clientDetailText}>Estado de Análise:</Text>
+                <StatusIndicator
+                  status={clientState.status ?? "Não disponível"}
+                />
+              </View>
+            </View>
+          </View>
+          {/* Detalhes da IA */}
+          <View style={styles.clientDetailCard}>
+            <View style={{ flexDirection: "row", marginTop: 8 }}>
+              <Text style={styles.clientDetailText}>Descrição:</Text>
+              <Text style={styles.clientDetailValue}>{ia.descricao}</Text>
+            </View>
+            <View style={{ flexDirection: "row", marginTop: 8 }}>
+              <Text style={styles.clientDetailText}>Consumo Atual:</Text>
+              <Text style={styles.clientDetailValue}>{ia.consumoAtual}</Text>
+            </View>
+            <View style={{ flexDirection: "row", marginTop: 8 }}>
+              <Text style={styles.clientDetailText}>Data de Criação:</Text>
+              <Text style={styles.clientDetailValue}>{formattedDate}</Text>
+            </View>
+          </View>
+          {/* Análises de Desperdício */}
+          <Text style={styles.clientDetailText2}>Análises de Desperdício:</Text>
+
           {analiseDesperdicio.length > 0 ? (
             analiseDesperdicio.map((analise) => (
-              <View key={analise.id} style={{ marginBottom: 10 }}>
-                <Text
-                  style={{ fontWeight: "bold", color: "#fff", marginBottom: 5 }}
-                >
-                  Descrição: {analise.descricao}
+              <View key={analise.id} style={styles.card}>
+                <Text style={styles.recommendationText2}>
+                  Descrição: 
                 </Text>
-                <Text
-                  style={{ fontWeight: "bold", color: "#fff", marginBottom: 5 }}
-                >
+                <Text style={styles.analysisText}>
+                 {analise.descricao}
+                </Text>
+                <Text style={styles.recommendationText2}>
                   Data da Análise:{" "}
+                </Text>
+                <Text style={styles.analysisText}>
                   {analise.dataAnalise?.toDate?.().toLocaleString() || "N/A"}
                 </Text>
-                <Text
-                  style={{ fontWeight: "bold", color: "#fff", marginBottom: 5 }}
-                >
-                  Desperdício Calculado: {analise.desperdicioCalculado}
+                <Text style={styles.recommendationText2}>
+                  Desperdício Calculado:
+                </Text>
+                <Text style={styles.analysisText}>
+                 {analise.desperdicioCalculado}
                 </Text>
               </View>
             ))
           ) : (
-            <Text style={{ fontWeight: "bold", color: "#fff", marginBottom: 5 }}>Não há análises de desperdício disponíveis.</Text>
+            <Text style={styles.noDataText}>
+              Não há análises de desperdício disponíveis.
+            </Text>
           )}
-        </View>
 
+          <Text style={styles.clientDetailText2}>Recomendações:</Text>
+
+          {recomendacoes.length > 0 ? (
+            recomendacoes.map((rec) => (
+              <View key={rec.id} style={styles.card}>
+                <Text style={styles.recommendationText2}>
+                  Descrição:
+                </Text>
+                <Text style={styles.recommendationText}>
+                   {rec.descricao}
+                </Text>
+                <Text style={styles.recommendationText2}>
+                  Data:{" "}
+                </Text>
+                <Text style={styles.recommendationText}>
+                 
+                  {rec.dataRecomendacao?.toDate?.().toLocaleString() || "N/A"}
+                </Text>
+                <Text style={styles.recommendationText2}>
+                   Implementado: 
+                </Text>
+                <Text style={styles.recommendationText}>
+                 {rec.implementada ? "Sim" : "Não"}
+                </Text>
+              </View>
+            ))
+          ) : (
+            <Text style={styles.noDataText}>
+              Não há recomendações disponíveis.
+            </Text>
+          )}
+        </ScrollView>
         <FAB.Group
-  visible={true}
-  open={menuVisible}
-  icon={menuVisible ? "close" : "plus"}
-  actions={[
-    {
-      icon: "pencil",
-      label: "Editar IA",
-      onPress: () => setModalVisible(true),
-    },
-    {
-      icon: "delete",
-      label: "Excluir IA",
-      onPress: onPressDelete,
-    },
-    {
-      icon: "check",
-      label: "Implementar",
-      onPress: () => handleImplementRecommendation(selectedScript),
-    },
-  ]}
-  
-  onStateChange={({ open }) => setMenuVisible(open)}
-  onPress={() => {
-    if (!menuVisible) {
-    }
-  }}
-/>;
-
-      
-<Portal>
-  <Dialog visible={modalVisible} onDismiss={() => setModalVisible(false)}>
-    <Dialog.Title>Editar IA</Dialog.Title>
-    <Dialog.Content>
-      <TextInput
-        label="Nome da IA"
-        value={editData.nomeIa}
-        mode="outlined"
-        style={{ marginBottom: 16 }}
-        onChangeText={(text) => setEditData({ ...editData, nomeIa: text })}
-      />
-      <TextInput
-        label="Descrição"
-        value={editData.descricao}
-        mode="outlined"
-        
-        style={{ marginBottom: 16 }}
-        onChangeText={(text) => setEditData({ ...editData, descricao: text })}
-      />
-      <TextInput
-        label="Consumo Atual"
-        value={editData.consumoAtual}
-        mode="outlined"
-        style={{ marginBottom: 16 }}
-        onChangeText={(text) => setEditData({ ...editData, consumoAtual: text })}
-      />
-    
-    </Dialog.Content>
-    <Dialog.Actions>
-      <Button onPress={handleSaveEdit}>Salvar</Button>
-      <Button onPress={() => setModalVisible(false)}>Cancelar</Button>
-    </Dialog.Actions>
-  </Dialog>
-</Portal>;
+          visible={true}
+          open={menuVisible}
+          icon={menuVisible ? "close" : "plus"}
+          actions={[
+            {
+              icon: "pencil",
+              label: "Editar IA",
+              onPress: () => setModalVisible(true),
+            },
+            {
+              icon: "delete",
+              label: "Excluir IA",
+              onPress: onPressDelete,
+            },
+            {
+              icon: "check",
+              label: "Implementar",
+              onPress: () => handleImplementRecommendation(selectedScript),
+            },
+          ]}
+          onStateChange={({ open }) => setMenuVisible(open)}
+        />
+        <Portal>
+          <Dialog
+            visible={modalVisible}
+            onDismiss={() => setModalVisible(false)}
+            style={{ backgroundColor: "white" }}
+          >
+            <Dialog.Title>Editar IA</Dialog.Title>
+            <Dialog.Content>
+              <TextInput
+                label="Nome da IA"
+                value={editData.nomeIa}
+                mode="outlined"
+                style={{ marginBottom: 16 }}
+                onChangeText={(text) =>
+                  setEditData({ ...editData, nomeIa: text })
+                }
+              />
+              <TextInput
+                label="Descrição"
+                value={editData.descricao}
+                mode="outlined"
+                style={{ marginBottom: 16 }}
+                onChangeText={(text) =>
+                  setEditData({ ...editData, descricao: text })
+                }
+              />
+              <TextInput
+                label="Consumo Atual"
+                value={editData.consumoAtual}
+                mode="outlined"
+                style={{ marginBottom: 16 }}
+                onChangeText={(text) =>
+                  setEditData({ ...editData, consumoAtual: text })
+                }
+              />
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={handleSaveEdit}>Salvar</Button>
+              <Button onPress={() => setModalVisible(false)}>Cancelar</Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
       </View>
     </Provider>
   );
 }
-
 const StatusIndicator = ({ status }: { status: string }) => {
   let color;
   let icon;

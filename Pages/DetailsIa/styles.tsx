@@ -8,6 +8,7 @@ export const styles = StyleSheet.create({
     backgroundColor: 'black',
     padding: 10,
   },
+ 
   header: {
     flexDirection: 'row',
     marginTop: 60,
@@ -133,17 +134,61 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 15,
   },
+  card: {
+    backgroundColor: "#1e1e1e", // Cor do fundo do card
+    borderRadius: 10, // Bordas arredondadas
+    padding: 16, // Espaçamento interno
+    marginBottom: 12, // Espaçamento entre cards
+    shadowColor: "#000", // Cor da sombra
+    shadowOffset: { width: 0, height: 2 }, // Direção da sombra
+    shadowOpacity: 0.25, // Opacidade da sombra
+    shadowRadius: 3.84, // Suavidade da sombra
+    elevation: 5, // Sombra para Android
+  },
+  analysisText: {
+    fontSize: 16,
+    color: "#fff",
+    marginBottom: 5,
+  },
+  recommendationText: {
+    fontSize: 16,
+    color: "#fff",
+    marginBottom: 5,
+  },
+  recommendationText2: {
+    fontSize: 18,
+    color: "#3C5A65",
+    marginBottom: 5,
+  },
+  noDataText: {
+    fontSize: 16,
+    color: "#aaa",
+    textAlign: "center",
+    marginTop: 10,
+  },
+  clientDetailText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 10,
+    
+  },
+  clientDetailText2: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 20,
+    marginTop: 20,
+    marginLeft: 10,
+    
+  },
   clientDetailCard: {
     padding: 20,
     backgroundColor: '#3C5A65',
     borderRadius: 10,
     marginTop: 20,
   },
-  clientDetailText: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#97A5A0 ',
-  },
+
   clientDetailValue: {
     fontSize: 16,
     color: '#fff',
@@ -201,10 +246,7 @@ export const styles = StyleSheet.create({
   scriptContainer: {
     marginBottom: 20,
   },
-  noDataText: {
-    fontSize: 16,
-    color: "#333",
-  },
+
 
   scriptCard: {
     backgroundColor: "#66044B", 

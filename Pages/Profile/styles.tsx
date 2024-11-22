@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: "#000000", 
-      padding: 20,
+      padding: 10,
     },
     profileContainer: {
       padding: 20,
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
     dialog:{
-      backgroundColor: "#3C4E65",
+      backgroundColor: "#000",
     },
     dialogTitle: {
       color: "#fff", 

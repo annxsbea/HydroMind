@@ -287,15 +287,14 @@ export const ouvirRecomendacoes = (
   callback: (recomendacoes: any[]) => void
 ) => {
   try {
-    const recomendacoesRef = collection(database, `usuario/${userId}/ias/${iaId}/recomendacoes`);
+    const recomendacoesRef = collection(database, `usuario/${userId}/ias/${iaId}/recomendacao`);
 
-    // Listener para ouvir mudanças em tempo real
     return onSnapshot(recomendacoesRef, (snapshot) => {
       const recomendacoes = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      callback(recomendacoes); // Envia os dados para a função de callback
+      callback(recomendacoes);
     });
   } catch (error) {
     console.error("Erro ao ouvir recomendações:", error);
@@ -304,19 +303,16 @@ export const ouvirRecomendacoes = (
 };
 export const criarRecomendacao = async (userId: string, iaId: string, descricao: string) => {
   try {
-    // Referência para a subcoleção "recomendacoes" dentro da IA
     const recomendacoesRef = collection(database, `usuario/${userId}/ias/${iaId}/recomendacoes`);
-    
-    // Cria o objeto da recomendação
+
     const novaRecomendacao = {
       descricao,
       dataRecomendacao: Timestamp.now(),
       implementada: false,
     };
 
-    // Adiciona ao Firestore
     const docRef = await addDoc(recomendacoesRef, novaRecomendacao);
-    return docRef.id; // Retorna o ID do documento criado
+    return docRef.id; 
   } catch (error) {
     console.error("Erro ao criar recomendação:", error);
     throw error;

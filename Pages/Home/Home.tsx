@@ -51,7 +51,6 @@ export default function Home() {
       <View>
         <SalesGoal />
       </View>
-      <Carrossel />
      
     </ScrollView>
   );

@@ -10,6 +10,7 @@ export   const scheduleNotification = async (title, body) => {
       },
       trigger: {
         seconds: 1, 
+        
       },
     });
   };

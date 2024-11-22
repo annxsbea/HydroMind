@@ -126,7 +126,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (userDoc.exists()) {
         const userDetails = { ...userDoc.data(), uid: user.uid } as UserDetails;
         setUser(userDetails);
-        await scheduleNotification("Bem-vindo(a) ao Hydrio Mind!", "A Solução para otimizar o desempenho das equipes de vendas!");
+        await scheduleNotification("Bem-vindo(a) ao Hydrio Mind!", "A Solução para diminuir desperdicio de agua em treinamentos Machine Learning!");
         return userDetails;
       } else {
         throw new Error("Dados do usuário não encontrados no Firestore.");
@@ -156,7 +156,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         cnpj,
         ias: []
       });
-      await scheduleNotification("Bem-vindo(a) ao Hydrio Mind!", "A Solução para otimizar o desempenho das equipes de vendas!");
+      await scheduleNotification("Bem-vindo(a) ao Hydrio Mind!", "A Solução para diminuir desperdicio de agua em treinamentos Machine Learning!");
       return user;
     } catch (error) {
       console.error("Erro ao criar conta:", error);
