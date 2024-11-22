@@ -19,6 +19,8 @@ export const styles = StyleSheet.create({
     backgroundColor: '#0000',
     marginLeft: 50,
   },
+
+  
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -45,6 +47,21 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
+  menuButton: {
+    padding: 10, // Espaçamento interno para tornar o botão mais clicável
+    backgroundColor: '#3C6558', // Cor de fundo azul
+    borderRadius: 50, // Tornando o botão arredondado
+    alignItems: 'center', // Alinhamento do conteúdo (ícone)
+    justifyContent: 'center', // Centralizando o conteúdo (ícone)
+    width: 50, // Largura do botão
+    height: 50, // Altura do botão (tamanho fixo)
+    shadowColor: '#000', 
+    shadowOffset: { width: 0, height: 2 }, 
+    shadowOpacity: 0.25, 
+    shadowRadius: 3.5, 
+    elevation: 5, 
+  },
+  
   modalContent: {
     width: "90%",
     backgroundColor: "white",
@@ -118,14 +135,14 @@ export const styles = StyleSheet.create({
   },
   clientDetailCard: {
     padding: 20,
-    backgroundColor: '#232230',
+    backgroundColor: '#3C5A65',
     borderRadius: 10,
     marginTop: 20,
   },
   clientDetailText: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#9987A3',
+    color: '#97A5A0 ',
   },
   clientDetailValue: {
     fontSize: 16,

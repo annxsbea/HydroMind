@@ -20,6 +20,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import Person from "../../Componentes/imagens/Person";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { FolderOpen } from "lucide-react-native";
+import { FAB } from "react-native-paper";
 
 export const ProfileScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -34,12 +35,13 @@ export const ProfileScreen: React.FC = () => {
   const [visibleImageDialog, setVisibleImageDialog] = useState(false);
   const [visibleEditDialog, setVisibleEditDialog] = useState(false);
   const [error, setError] = useState<string>("");
-
-  // States for editinguser profile
   const [editedRazaoSocial, setEditedRazaoSocial] = useState(user?.razao_social || "");
   const [editedEmail, setEditedEmail] = useState(user?.email || "");
   const [editCnpj, setEditCnpj] = useState(user?.cnpj || "");
-  const escolherArquivo = async () => {
+  const [menuVisible, setMenuVisible] = useState(false);
+
+
+ const escolherArquivo = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
       Alert.alert(
@@ -63,7 +65,7 @@ export const ProfileScreen: React.FC = () => {
     if (!user) return;
     setLoading(true);
     try {
-      await updateProfile(editedRazaoSocial, editedEmail, editCnpj); // Pass individual parameters
+      await updateProfile(editedRazaoSocial, editedEmail, editCnpj); 
       setSuccessMessage("Perfil atualizado com sucesso!");
       setVisibleEditDialog(false);
     } catch (err) {
@@ -73,42 +75,41 @@ export const ProfileScreen: React.FC = () => {
       setLoading(false);
     }
   };
-  
   const handleCreateIa = async () => {
     if (!user) {
       console.error("Usuário não autenticado");
       return;
     }
-
+  
     setLoading(true);
     try {
-      let fileUrl = "";
+      let fileUrl = null; 
       if (fileUri) {
         const storage = getStorage();
-        const fileRef = ref(storage, `ias/${user.uid}/${iaName}.jpg`);
-        const response = await fetch(fileUri);
-        const blob = await response.blob();
-        await uploadBytes(fileRef, blob);
-
-        fileUrl = await getDownloadURL(fileRef);
+        fileUrl = await uploadFile(storage, user, iaName, fileUri); 
       }
+  
       const consumoAtualNumber = parseFloat(iaConsumption);
       if (isNaN(consumoAtualNumber)) {
         console.error("Consumo atual inválido");
+        setLoading(false);
         return;
       }
+  
       const iaData = {
         nomeIa: iaName,
         descricao: iaDescription,
         consumoAtual: consumoAtualNumber,
         status: "ativo",
-        fileUrl,
+        fileUrl, // Pode ser nulo
       };
-
+  
       const iaId = await criarIa(user.uid, iaData);
       console.log("Nova IA criada com ID:", iaId);
+  
       setSuccessMessage("IA criada com sucesso!");
       Alert.alert("Sucesso", `IA criada com ID: ${iaId}`);
+      setVisibleIaDialog(false);
     } catch (error) {
       console.error("Erro ao criar IA:", error);
       setSuccessMessage("Erro ao criar IA. Tente novamente.");
@@ -116,7 +117,28 @@ export const ProfileScreen: React.FC = () => {
       setLoading(false);
     }
   };
-
+  
+  const uploadFile = async (storage, user, iaName, fileUri) => {
+    try {
+      console.log("Iniciando upload...");
+      const fileRef = ref(storage, `ias/${user.uid}/${iaName}.jpg`);
+      console.log("Referencia criada:", fileRef);
+  
+      const response = await fetch(fileUri);
+      const blob = await response.blob();
+      console.log("Blob criado:", blob);
+  
+      await uploadBytes(fileRef, blob);
+      const fileUrl = await getDownloadURL(fileRef);
+      console.log("Upload concluído. URL:", fileUrl);
+  
+      return fileUrl; 
+    } catch (error) {
+      console.error("Erro no upload:", error);
+      throw error; 
+    }
+  };
+  
   const pickImage = async (source: "gallery" | "camera") => {
     let result;
     if (source === "camera") {
@@ -140,7 +162,10 @@ export const ProfileScreen: React.FC = () => {
         quality: 1,
       });
     }
-
+  const handlePress = () => {
+    // Ação ao pressionar o FAB
+    console.log("FAB pressionado!");
+  };
     if (!result.canceled) {
       updateProfilePicture(result.assets[0].uri);
       setSuccessMessage("Imagem de perfil atualizada com sucesso!");
@@ -182,23 +207,45 @@ export const ProfileScreen: React.FC = () => {
           </View>
         </View>
 
-         {/* Botão para editar o perfil */}
-         <TouchableOpacity
-          onPress={() => setVisibleEditDialog(true)}
-          style={styles.testButton}
-        >
-          <Text style={styles.buttonText}>Editar Perfil</Text>
-        </TouchableOpacity>
+       
       </View>
 
-      <TouchableOpacity
-        onPress={() => setVisibleIaDialog(true)}
-        style={styles.testButton}
-      >
-        <Text style={styles.buttonText}>Criar IA</Text>
-      </TouchableOpacity>
+     
+  <FAB.Group
+  visible={true} 
+  open={menuVisible} 
+  icon={menuVisible ? "close" : "plus"} 
+  actions={[
+    {
+      icon: "account-edit",
+      label: "Editar Perfil",
+      onPress: () => setVisibleEditDialog(true),
+    },
+    {
+      icon: "brain",
+      label: "Criar IA",
+      onPress: () => setVisibleIaDialog(true), 
+    },
+    {
+      icon: "logout",
+      label: "Sair",
+      onPress: signOut, 
+    },
+  ]}
+  onStateChange={({ open }) => setMenuVisible(open)} 
+  onPress={() => {
+    if (!menuVisible) {
+    }
+  }}
+  style={{
+    position: "absolute", 
+    right: 16, 
+    bottom: -300, 
+    zIndex: 10, 
+  }}
+/>
 
-      {/* Dialog para criar IA */}
+
       <Portal>
         <Dialog
           visible={visibleIaDialog}
@@ -229,7 +276,7 @@ export const ProfileScreen: React.FC = () => {
               onChangeText={setIaConsumption}
               keyboardType="numeric"
             />
-            <View style={{ marginBottom: 20 }}>
+           <View style={{ marginBottom: 20 }}>
               <Text style={{ color: "#fff", marginBottom: 10 }}>
                 Anexar arquivo com dados de consumo:
               </Text>
@@ -252,7 +299,6 @@ export const ProfileScreen: React.FC = () => {
                 </Text>
               </Button>
             </View>
-
             <Button
               mode="contained"
               onPress={handleCreateIa}

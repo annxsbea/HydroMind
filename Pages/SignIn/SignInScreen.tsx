@@ -23,7 +23,7 @@ export default function SignInScreen() {
   const [loading, setLoading] = useState(false);
   const { signIn, user} = useAuth();
   const navigationSignUp = useNavigation<SignInScreenProp>();
-  const [isFocused, setIsFocused] = useState(false); // Estado para controlar o foco
+  const [isFocused, setIsFocused] = useState(false); 
 
   const requestNotificationPermission = async () => {
     const { status } = await Notifications.getPermissionsAsync();
@@ -99,9 +99,9 @@ export default function SignInScreen() {
       style={styles.textInput}
       textColor="#fff"
       mode="outlined"
-      outlineColor={isFocused ? '#27434B' : '#27434B'} // Cor da borda
-      onFocus={() => setIsFocused(true)} // Quando o campo for focado
-      onBlur={() => setIsFocused(false)} // Quando o campo perder o foco
+      outlineColor={isFocused ? '#27434B' : '#27434B'}
+      onFocus={() => setIsFocused(true)} 
+      onBlur={() => setIsFocused(false)} 
     />
           </Card.Content>
 

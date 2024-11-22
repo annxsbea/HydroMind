@@ -40,7 +40,7 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     alignItems: "center",
-    width: "30%", // Divide o espaço em três partes iguais
+    width: "30%", 
   },
   cardTitle: {
     fontSize: 14,

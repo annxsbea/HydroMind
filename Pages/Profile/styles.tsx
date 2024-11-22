@@ -85,45 +85,46 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-  dialog:{
-    backgroundColor: "#3C4E65",
-  },
-  dialogTitle: {
-    color: "#fff", 
-  },
-    logoutButtonText: {
-    fontSize: 17,
-    fontWeight: "bold",
-    color: "#D0CCE4",
-    textAlign: "center",
-    padding: 10,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#fff", 
-    backgroundColor: "#1B2736",
-    color: "#FFFFFF",
-    marginVertical: 10,
-    padding: 10,
-    borderRadius: 5,
-  },
-  createButton: {
-    backgroundColor: "#172823", 
-    marginTop: 20,
-  },
-  attachmentButton: {
-    backgroundColor: "#001F3F", 
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 10,
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#00FF00", 
-  },
-  attachmentButtonText: {
-    color: "#00FF00", 
-    fontSize: 16,
-  },
+    dialog:{
+      backgroundColor: "#3C4E65",
+    },
+    dialogTitle: {
+      color: "#fff", 
+    },
+      logoutButtonText: {
+      fontSize: 17,
+      fontWeight: "bold",
+      color: "#D0CCE4",
+      textAlign: "center",
+      padding: 10,
+    },
+    input: {
+      borderWidth: 1,
+      borderColor: "#fff", 
+      backgroundColor: "#1B2736",
+      color: "#FFFFFF",
+      marginVertical: 10,
+      padding: 10,
+      borderRadius: 5,
+    },
+    createButton: {
+      backgroundColor: "#172823", 
+      marginTop: 20,
+    },
+
+    attachmentButton: {
+      backgroundColor: "#001F3F", 
+      padding: 10,
+      borderRadius: 5,
+      marginTop: 10,
+      alignItems: "center",
+      borderWidth: 1,
+      borderColor: "#00FF00", 
+    },
+    attachmentButtonText: {
+      color: "#00FF00", 
+      fontSize: 16,
+    },
   errorContainer: {
     backgroundColor: "#f8d7da",
     padding: 15,

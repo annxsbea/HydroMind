@@ -1,16 +1,47 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, FlatList, Alert } from "react-native";
-import { DetailsIaRouteProp, RootStackParamList } from "../../@types";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  FlatList,
+  Alert,
+  GestureResponderEvent,
+} from "react-native";
+import {
+  DetailsIaRouteProp,
+  ListIasResponse,
+  RootStackParamList,
+} from "../../@types";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { ArrowLeft, Cloud, RefreshCcw, CheckCircle, XCircle, Info } from "lucide-react-native";
+import {
+  ArrowLeft,
+  Cloud,
+  RefreshCcw,
+  CheckCircle,
+  XCircle,
+  Info,
+} from "lucide-react-native";
 import { styles } from "./styles";
 import { useAuth } from "../../Context/AuthContext";
-import { updateIaStatus, fetchRecomendacoes, editarIa, excluirIa } from "../../Services/Ias";
-import { Button, Provider, TextInput } from "react-native-paper";
-import { Timestamp } from "firebase/firestore";
+import {
+  updateIaStatus,
+  fetchRecomendacoes,
+  editarIa,
+  excluirIa,
+  obterIas,
+  criarRecomendacao,
+  ouvirRecomendacoes,
+  ouvirAnalisesDesperdicio,
+} from "../../Services/Ias";
+import { Button, Divider, Menu, Provider, TextInput } from "react-native-paper";
+import { collection, onSnapshot, Timestamp } from "firebase/firestore";
 import { format } from "date-fns";
-import {ptBR} from "date-fns/locale/pt-BR";
-import { Modal } from 'react-native';
+import { ptBR } from "date-fns/locale/pt-BR";
+import { Modal } from "react-native";
+import { database } from "../../firebaseConfig";
+import { FAB } from "react-native-paper";
+import { Dialog, Portal } from "react-native-paper";
 
 type Props = {
   route: DetailsIaRouteProp;
@@ -18,6 +49,9 @@ type Props = {
 
 export default function DetailsIa({ route }: Props) {
   const { ia } = route.params;
+  const { user } = useAuth();
+  const [ias, setIas] = useState<ListIasResponse[]>([]);
+
   const [modalVisible, setModalVisible] = useState(false);
   const [editData, setEditData] = useState({
     nomeIa: ia.nomeIa,
@@ -32,88 +66,164 @@ export default function DetailsIa({ route }: Props) {
   const [selectedScript, setSelectedScript] = useState("");
   const [modalVisibleScript, setModalVisibleScript] = useState(false);
   const [recomendacoes, setRecomendacoes] = useState([]);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [analiseDesperdicio, setAnaliseDesperdicio] = useState([]);
+  useEffect(() => {
+    if (!user || !ia) return;
+
+    const unsubscribe = ouvirRecomendacoes(user.uid, ia.uid, (dados) => {
+      setRecomendacoes(dados); // Atualiza o estado com as recomendações
+    });
+
+    return () => unsubscribe(); // Desativa o listener ao desmontar o componente
+  }, [user, ia]);
 
   useEffect(() => {
-    async function loadRecomendacoes() {
-      const fetchedRecomendacoes = await fetchRecomendacoes(ia.uid);
-      console.log(fetchedRecomendacoes); 
-      setRecomendacoes(fetchedRecomendacoes || []);
-    }
-    loadRecomendacoes();
-  }, [ia.uid]);
+    if (!user || !ia) return;
+
+    const unsubscribe = ouvirAnalisesDesperdicio(user.uid, ia.uid, (dados) => {
+      setAnaliseDesperdicio(dados); // Atualiza o estado com as análises
+    });
+
+    return () => unsubscribe(); // Desativa o listener ao desmontar o componente
+  }, [user, ia]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const unsubscribe = onSnapshot(
+      collection(database, `usuario/${user.uid}/ias`),
+      (snapshot) => {
+        const updatedIas: ListIasResponse[] = snapshot.docs.map((doc) => ({
+          uid: doc.id, // ID do documento Firestore
+          nomeIa: doc.data().nomeIa,
+          descricao: doc.data().descricao,
+          consumoAtual: doc.data().consumoAtual,
+          status: doc.data().status,
+          dataCriacao: doc.data().dataCriacao?.toDate() || new Date(),
+          fileUrl: doc.data().fileUrl,
+        }));
+        setIas(updatedIas);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [user]);
+
+  if (!user) {
+    return <div>Carregando...</div>;
+  }
 
   const openScriptModal = (scriptDescricao: string) => {
     setSelectedScript(scriptDescricao);
     setModalVisibleScript(true);
   };
-  const handleDelete = async () => {
-    Alert.alert(
-      "Confirmação",
-      "Você tem certeza que deseja excluir essa IA?",
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Excluir",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await excluirIa(ia.uid); // Passe apenas `ia.uid`
-              navigation.goBack(); // Volta para a tela anterior após exclusão
-            } catch (error) {
-              console.error("Erro ao excluir a IA:", error);
-            }
-          },
-        },
-      ]
-    );
+  const handleDelete = async (ia: any) => {
+    try {
+      if (!user?.uid) {
+        alert("Usuário não autenticado.");
+        return;
+      }
+
+      await excluirIa(user.uid, ia.uid);
+      alert("IA excluída com sucesso!");
+      navigation.goBack();
+    } catch (error) {
+      alert("Erro ao excluir IA: " + error.message);
+    }
   };
+
   const handleSaveEdit = async () => {
     try {
-      await editarIa(ia.uid, editData);
+      await editarIa(user.uid, ia.uid, editData);
       Alert.alert("Sucesso", "IA editada com sucesso!");
-      setModalVisible(false); // Fecha o modal após salvar
+      setModalVisible(false);
     } catch (error) {
       console.error("Erro ao editar a IA:", error);
     }
   };
+
+  const handleCreateRecomendacao = async () => {
+    try {
+      if (!user || !ia) {
+        Alert.alert("Erro", "Usuário ou IA não definido.");
+        return;
+      }
+
+      const descricao = "Nova recomendação de teste."; // Aqui você pode receber uma entrada do usuário
+      await criarRecomendacao(user.uid, ia.uid, descricao);
+
+      Alert.alert("Sucesso", "Recomendação criada com sucesso!");
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível criar a recomendação.");
+    }
+  };
+
   const handleImplementRecommendation = async (scriptDescricao: string) => {
     try {
+      if (!ia.uid) {
+        throw new Error("ID da IA não encontrado.");
+      }
+  
       setClientState((prevState) => ({
         ...prevState,
         status: "Aplicando Recomendações",
       }));
+  
       await updateIaStatus(ia.uid, "Aplicando Recomendações");
+  
       console.log(`Recomendação "${scriptDescricao}" implementada com sucesso.`);
     } catch (error) {
       console.error("Erro ao implementar recomendação:", error);
+      if (error instanceof Error) {
+        console.error("Detalhes do erro:", error.message);
+      }
+      alert("Houve um erro ao implementar a recomendação. Tente novamente.");
     }
   };
+  
 
   const formattedDate =
     ia.dataCriacao instanceof Timestamp
-      ? format(ia.dataCriacao.toDate(), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
+      ? format(ia.dataCriacao.toDate(), "dd 'de' MMMM 'de' yyyy", {
+          locale: ptBR,
+        })
       : ia.dataCriacao;
-
+  const onPressDelete = (event: GestureResponderEvent) => {
+    handleDelete(ia);
+  };
   return (
     <Provider>
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}
+          >
             <ArrowLeft color="#fff" size={35} />
           </TouchableOpacity>
         </View>
 
         {/* Informações do Cliente */}
         <View style={styles.clientInfoContainer}>
-          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
             <View>
               <Text style={styles.clientDetailText}>IA:</Text>
               <Text style={styles.clientName}>{ia.nomeIa}</Text>
             </View>
             <View>
               <Text style={styles.clientDetailText}>Estado de Análise:</Text>
-              <StatusIndicator status={clientState.status ?? "Não disponível"} />
+              <StatusIndicator
+                status={clientState.status ?? "Não disponível"}
+              />
             </View>
           </View>
         </View>
@@ -134,95 +244,126 @@ export default function DetailsIa({ route }: Props) {
           </View>
         </View>
 
-        {/* Recomendações */}
-        <View style={styles.scriptContainer}>
-          <FlatList
-            data={recomendacoes}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <View style={{ marginTop: 10, alignItems: "center" }}>
-                <TouchableOpacity
-                  onPress={() => openScriptModal(item.descricao)}
-                  style={styles.scriptCard}
+        <View style={styles.clientDetailCard}>
+          <Text style={styles.clientDetailText}>Recomendações:</Text>
+          {recomendacoes.length > 0 ? (
+            recomendacoes.map((rec) => (
+              <View key={rec.id} style={{ marginBottom: 10 }}>
+                <Text
+                  style={{ fontWeight: "bold", color: "#fff", marginBottom: 5 }}
                 >
-                  <Text style={styles.scriptTitle}>Recomendação</Text>
-                  <Text>{item.descricao}</Text>
-                  <Button onPress={() => handleImplementRecommendation(item.descricao)} mode="contained">
-                    Implementar
-                  </Button>
-                </TouchableOpacity>
+                  Descrição: {rec.descricao}
+                </Text>
+                <Text
+                  style={{ fontWeight: "bold", color: "#fff", marginBottom: 5 }}
+                >
+                  Data:{" "}
+                  {rec.dataRecomendacao?.toDate?.().toLocaleString() || "N/A"}
+                </Text>
+                <Text
+                  style={{ fontWeight: "bold", color: "#fff", marginBottom: 5 }}
+                >
+                  Status Implementado: {rec.implementada ? "Sim" : "Não"}
+                </Text>
               </View>
-            )}
-            ListEmptyComponent={
-              <Text style={styles.noDataText}>
-                <Info color="gray" size={20} /> Sem recomendações disponíveis.
-              </Text>
-            }
-          />
+            ))
+          ) : (
+            <Text style={{ fontWeight: "bold", color: "#fff", marginBottom: 5 }}>Não há recomendações disponíveis.</Text>
+          )}
+        </View>
+        <View style={styles.clientDetailCard}>
+          <Text style={styles.clientDetailText}>Análises de Desperdício:</Text>
+          {analiseDesperdicio.length > 0 ? (
+            analiseDesperdicio.map((analise) => (
+              <View key={analise.id} style={{ marginBottom: 10 }}>
+                <Text
+                  style={{ fontWeight: "bold", color: "#fff", marginBottom: 5 }}
+                >
+                  Descrição: {analise.descricao}
+                </Text>
+                <Text
+                  style={{ fontWeight: "bold", color: "#fff", marginBottom: 5 }}
+                >
+                  Data da Análise:{" "}
+                  {analise.dataAnalise?.toDate?.().toLocaleString() || "N/A"}
+                </Text>
+                <Text
+                  style={{ fontWeight: "bold", color: "#fff", marginBottom: 5 }}
+                >
+                  Desperdício Calculado: {analise.desperdicioCalculado}
+                </Text>
+              </View>
+            ))
+          ) : (
+            <Text style={{ fontWeight: "bold", color: "#fff", marginBottom: 5 }}>Não há análises de desperdício disponíveis.</Text>
+          )}
         </View>
 
-        {/* Botões de Edição e Exclusão */}
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.editButton}>
-          <Text style={styles.buttonText}>Editar IA</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleDelete} style={styles.deleteButton}>
-          <Text style={styles.buttonText}>Excluir IA</Text>
-        </TouchableOpacity>
-      </View>
+        <FAB.Group
+  visible={true}
+  open={menuVisible}
+  icon={menuVisible ? "close" : "plus"}
+  actions={[
+    {
+      icon: "pencil",
+      label: "Editar IA",
+      onPress: () => setModalVisible(true),
+    },
+    {
+      icon: "delete",
+      label: "Excluir IA",
+      onPress: onPressDelete,
+    },
+    {
+      icon: "check",
+      label: "Implementar",
+      onPress: () => handleImplementRecommendation(selectedScript),
+    },
+  ]}
+  
+  onStateChange={({ open }) => setMenuVisible(open)}
+  onPress={() => {
+    if (!menuVisible) {
+    }
+  }}
+/>;
 
-   
-      {/* Modal de Edição */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Editar IA</Text>
-            
-            {/* Campos de Edição */}
-            <TextInput
-              style={styles.input}
-              placeholder="Nome da IA"
-              value={editData.nomeIa}
-              onChangeText={(text) => setEditData({ ...editData, nomeIa: text })}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Descrição"
-              value={editData.descricao}
-              onChangeText={(text) => setEditData({ ...editData, descricao: text })}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Consumo Atual"
-              value={editData.consumoAtual}
-              onChangeText={(text) => setEditData({ ...editData, consumoAtual: text })}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Status"
-              value={editData.status}
-              onChangeText={(text) => setEditData({ ...editData, status: text })}
-            />
-
-            {/* Botões do Modal */}
-            <View style={styles.modalButtonContainer}>
-              <TouchableOpacity onPress={handleSaveEdit} style={styles.saveButton}>
-                <Text style={styles.buttonText}>Salvar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.cancelButton}>
-                <Text style={styles.buttonText}>Cancelar</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      
+<Portal>
+  <Dialog visible={modalVisible} onDismiss={() => setModalVisible(false)}>
+    <Dialog.Title>Editar IA</Dialog.Title>
+    <Dialog.Content>
+      <TextInput
+        label="Nome da IA"
+        value={editData.nomeIa}
+        mode="outlined"
+        style={{ marginBottom: 16 }}
+        onChangeText={(text) => setEditData({ ...editData, nomeIa: text })}
+      />
+      <TextInput
+        label="Descrição"
+        value={editData.descricao}
+        mode="outlined"
+        
+        style={{ marginBottom: 16 }}
+        onChangeText={(text) => setEditData({ ...editData, descricao: text })}
+      />
+      <TextInput
+        label="Consumo Atual"
+        value={editData.consumoAtual}
+        mode="outlined"
+        style={{ marginBottom: 16 }}
+        onChangeText={(text) => setEditData({ ...editData, consumoAtual: text })}
+      />
+    
+    </Dialog.Content>
+    <Dialog.Actions>
+      <Button onPress={handleSaveEdit}>Salvar</Button>
+      <Button onPress={() => setModalVisible(false)}>Cancelar</Button>
+    </Dialog.Actions>
+  </Dialog>
+</Portal>;
       </View>
-     
     </Provider>
   );
 }

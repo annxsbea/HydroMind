@@ -180,7 +180,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-// Atualize o valor do contexto
 <AuthContext.Provider value={{ user, signIn, createAccount, signOut, updateProfilePicture, updateProfile }}>
       {children}
     </AuthContext.Provider>

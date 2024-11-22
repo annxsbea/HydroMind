@@ -5,7 +5,7 @@ export interface UserDetails {
   cnpj: string;
   profilePictureUrl?: string;
   Total_economizado?: number;
-  meta_economia?: number;
+  meta_economia?: number; 
 
 }
 
