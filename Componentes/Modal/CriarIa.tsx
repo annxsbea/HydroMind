@@ -10,7 +10,7 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import styles from "../../Pages/Profile/styles";
-import { criarIa } from "../../Services/Ias";
+import { criarIa } from "../../ServicesFirebase/Ias";
 import { useAuth } from "../../Context/AuthContext";
 
 interface CreateIaDialogProps {
@@ -102,6 +102,7 @@ const CreateIaDialog: React.FC<CreateIaDialogProps> = ({ visible, onDismiss }) =
             mode="outlined"
             value={iaName}
             style={{backgroundColor:"#fff"}}
+            textColor="#000"
             onChangeText={setIaName}
           />
           <TextInput
@@ -110,6 +111,8 @@ const CreateIaDialog: React.FC<CreateIaDialogProps> = ({ visible, onDismiss }) =
             value={iaDescription}
             onChangeText={setIaDescription}
             style={{backgroundColor:"#fff"}}
+            textColor="#000"
+
 
           />
           <TextInput
@@ -117,6 +120,7 @@ const CreateIaDialog: React.FC<CreateIaDialogProps> = ({ visible, onDismiss }) =
             mode="outlined"
             value={iaConsumption}
             style={{backgroundColor:"#fff"}}
+            textColor="#000"
 
             onChangeText={setIaConsumption}
             keyboardType="numeric"

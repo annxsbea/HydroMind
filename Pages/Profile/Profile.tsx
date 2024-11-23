@@ -15,7 +15,7 @@ import { useAuth } from "../../Context/AuthContext";
 import styles from "./styles";
 import { Button } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
-import { criarIa } from "../../Services/Ias";
+import { criarIa } from "../../ServicesFirebase/Ias";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import Person from "../../Componentes/imagens/Person";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";

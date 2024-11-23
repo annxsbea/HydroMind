@@ -33,7 +33,7 @@ import {
   criarRecomendacao,
   ouvirRecomendacoes,
   ouvirAnalisesDesperdicio,
-} from "../../Services/Ias";
+} from "../../ServicesFirebase/Ias";
 import { Button, Divider, Menu, Provider, TextInput } from "react-native-paper";
 import { collection, onSnapshot, Timestamp } from "firebase/firestore";
 import { format } from "date-fns";

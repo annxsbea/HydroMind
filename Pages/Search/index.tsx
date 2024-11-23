@@ -13,7 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import { DetailsIaNavigationProp } from "../../@types";
 import Fundo from "../../Componentes/imagens/Fundo";
 import Logo from "../../Componentes/imagens/Logo";
-import { criarIa, obterIas, editarIa } from "../../Services/Ias";
+import { criarIa, obterIas, editarIa } from "../../ServicesFirebase/Ias";
 import styles from "./styles";
 import { useAuth } from "../../Context/AuthContext";
 import {
